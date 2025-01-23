@@ -9,7 +9,6 @@ import { ConfigType } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { IS_PUBLIC_KEY } from 'src/common/decorators/public.decorator';
 import jwtConfig from 'src/iam/config/jwt.config';
 import { REQUEST_USER_KEY } from 'src/iam/iam.constants';
 
@@ -23,10 +22,6 @@ export class AccessTokenGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // Check if the route is public, then allow.
-    const isPublic = this.reflector.get(IS_PUBLIC_KEY, context.getHandler());
-    if (isPublic) return true;
-
     const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeader(request);
 
@@ -38,7 +33,6 @@ export class AccessTokenGuard implements CanActivate {
         this.jwtConfiguration,
       );
       request[REQUEST_USER_KEY] = payload;
-      console.log(payload);
     } catch {
       throw new UnauthorizedException();
     }
