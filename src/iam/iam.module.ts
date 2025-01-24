@@ -14,13 +14,16 @@ import { BcryptService } from './hashing/bcrypt.service';
 import { HashingService } from './hashing/hashing.service';
 // import { RolesGuard } from './authorization/guards/roles.guard';
 // import { PermissionsGuard } from './authorization/guards/permissions.guard';
+import { ApiKey } from 'src/users/api-keys/entities/api-key.entity';
+import { ApiKeysService } from './authentication/api-keys.service';
+import { ApiKeyGuard } from './authentication/guards/api-key.guard';
+import { PoliciesGuard } from './authorization/guards/policies.guard';
 import { FrameworkContributorPolicyHandler } from './authorization/policies/framework-contributor.policy';
 import { PolicyHandlerStorage } from './authorization/policies/policy-handlers.storage';
-import { PoliciesGuard } from './authorization/guards/policies.guard';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, ApiKey]),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
   ],
@@ -38,10 +41,12 @@ import { PoliciesGuard } from './authorization/guards/policies.guard';
       useClass: PoliciesGuard, // RolesGuard, PermissionsGuard
     },
     AccessTokenGuard,
+    ApiKeyGuard,
     RefreshTokenIdsStorage,
     AuthenticationService,
     PolicyHandlerStorage,
     FrameworkContributorPolicyHandler,
+    ApiKeysService,
   ],
   controllers: [AuthenticationController],
 })
