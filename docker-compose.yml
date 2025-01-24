@@ -11,3 +11,8 @@ services:
       - POSTGRES_PASSWORD=auth_pass
       - POSTGRES_USER=auth_user
       - POSTGRES_DB=auth_db
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'
+    restart: always
